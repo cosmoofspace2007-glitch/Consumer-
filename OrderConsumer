@@ -1,0 +1,32 @@
+package com.example.inventory.consumer;
+
+import com.example.inventory.dto.OrderEvent;
+import com.example.inventory.service.InventoryService;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Service;
+
+@Service
+public class OrderConsumer {
+
+    private final InventoryService inventoryService;
+
+    public OrderConsumer(InventoryService inventoryService) {
+        this.inventoryService = inventoryService;
+    }
+
+    @KafkaListener(
+            topics = "medicine-stock-events",
+            groupId = "inventory-group"
+    )
+    public void consume(OrderEvent event){
+
+        System.out.println("Receive : " + event);
+
+        inventoryService.decreaseStock(
+                event.getMedicineId(),
+                event.getQuantity()
+        );
+
+    }
+
+}
