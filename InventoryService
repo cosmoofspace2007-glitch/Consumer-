@@ -1,0 +1,37 @@
+package com.example.inventory.service;
+
+import com.example.inventory.entity.Medicine;
+import com.example.inventory.repository.MedicineRepository;
+import org.springframework.stereotype.Service;
+
+@Service
+public class InventoryService {
+
+    private final MedicineRepository repository;
+
+    public InventoryService(MedicineRepository repository) {
+        this.repository = repository;
+    }
+
+    public void decreaseStock(Long medicineId,Integer quantity){
+
+        Medicine medicine =
+                repository.findById(medicineId).orElse(null);
+
+        if(medicine==null){
+
+            System.out.println("Medicine not found");
+
+            return;
+        }
+
+        medicine.setStock(
+                medicine.getStock()-quantity
+        );
+
+        repository.save(medicine);
+
+        System.out.println("Stock Updated");
+    }
+
+}
